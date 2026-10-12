@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     )
     version: str = Field(default="0.1.0", description="Semantic version")
     current_block: str = Field(
-        default="Block 1: Project Foundation",
+        default="Block 2: Character Asset Foundation",
         description="Current engineering milestone block",
     )
     environment: Literal["development", "staging", "production", "testing"] = Field(

@@ -14,7 +14,7 @@ MIRA is built strictly **block-by-block**. Each block establishes concrete, veri
 [Block 7: External API & MediVerse Gateway]
 ```
 
-### ✅ Block 1: Project Foundation (Current Block)
+### ✅ Block 1: Project Foundation (Completed)
 - **Goal:** Establish the complete, professional, standalone architecture and safety sentinel.
 - **Deliverables:**
   - Independent project setup (zero external dependencies).
@@ -29,17 +29,24 @@ MIRA is built strictly **block-by-block**. Each block establishes concrete, veri
 
 ---
 
-### ⏳ Block 2: Brain Core & Clinical Reasoning
-- **Goal:** Stateful clinical reasoning and natural dialogue orchestration.
-- **Scope:**
-  - Multi-turn conversation management.
-  - Symptom inquiry decomposition.
-  - LLM provider integration with prompt templates.
-  - Working memory state persistence.
+### ✅ Block 2: Character Asset Foundation (Completed)
+- **Goal:** Establish canonical visual identity anchor, multi-layer architecture, and data-driven state system for MIRA character.
+- **Canonical Anchor:** `MIRA_FACE_MODEL` (`MIRA_FACE_MODEL_v1`, SHA256: `bf3b7cdc290d28ca7500b3d55679cbd98a397b4ec873dd86e8c910c46d1b44dc`).
+- **Deliverables:**
+  - Standardized character asset pipeline (`assets/mira/identity`, `reference`, `character`, `face`, `expressions`, `animation`, `audio`).
+  - Immutable character identity contract (`src/character/identity.py`, `MIRA_CHARACTER_IDENTITY`).
+  - 13 canonical data-driven character states (`src/character/states.py`, `IDLE`, `GREETING`, `LISTENING`, `THINKING`, `SPEAKING`, `FRIENDLY`, `CONCERNED`, `SERIOUS`, `REASSURING`, `EMERGENCY`, `ESCALATING`, `CALMING`, `COMPLETED`).
+  - 10-layer visual stack (`src/character/layers.py`: BACKGROUND, BODY, UNIFORM, HEAD, HAIR, FACE, EYES, EYEBROWS, MOUTH, ACCESSORIES).
+  - Reusable decoupled component (`src/character/component.py`, `MiraCharacter`, strict separation of AI logic).
+  - Responsive Web Component & CSS (`src/character/static/mira-character.js`, `mira-character.css`).
+  - Interactive viewer console (`/character`, `src/character/static/viewer.html`).
+  - Dormant future animation capability contracts (`src/character/animation_hooks.py`).
+  - 5 Character API endpoints (`/api/v1/character/*`).
+  - 100% passing tests (41/41 tests passing).
 
 ---
 
-### ⏳ Block 3: Knowledge Base & Medical RAG
+### ⏳ Block 3: Brain Core & Clinical Reasoning
 - **Goal:** Grounded clinical retrieval against verified healthcare guidelines.
 - **Scope:**
   - Vector embeddings and vector store indexing.

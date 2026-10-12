@@ -1,0 +1,405 @@
+/* ==========================================================================
+   MIRA Character Component Design System (Block 3 Interactive Animation)
+   Autonomous AI Nurse Assistant & Healthcare Companion
+   Canonical Visual Identity Anchor: MIRA_FACE_MODEL
+   ========================================================================== */
+
+:root {
+  --mira-medical-white: #ffffff;
+  --mira-clean-surface: #f8fafc;
+  --mira-clinical-teal: #0d9488;
+  --mira-clinical-teal-dark: #0f766e;
+  --mira-clinical-teal-light: #ccfbf1;
+  --mira-accent-pink: #f472b6;
+  --mira-accent-pink-soft: #fbcfe8;
+  --mira-accent-sandal: #e2c799;
+  --mira-accent-sandal-light: #f5ebe0;
+  --mira-clinical-slate: #0f172a;
+  --mira-text-primary: #1e293b;
+  --mira-text-muted: #64748b;
+  --mira-emergency-red: #dc2626;
+  --mira-warning-amber: #f59e0b;
+  
+  --mira-border-subtle: rgba(13, 148, 136, 0.2);
+  --mira-shadow-clinical: 0 12px 30px -6px rgba(15, 23, 42, 0.2), 0 8px 12px -6px rgba(15, 23, 42, 0.12);
+  --mira-radius-portrait: 20px;
+  --mira-transition-state: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Custom Element Host */
+mira-character {
+  display: block;
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  user-select: none;
+}
+
+/* Character Container */
+.mira-character-container {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  border-radius: var(--mira-radius-portrait);
+  overflow: hidden;
+  background: linear-gradient(180deg, #0b1329 0%, #080d1e 100%);
+  box-shadow: var(--mira-shadow-clinical);
+  border: 1px solid var(--mira-border-subtle);
+  transition: all var(--mira-transition-state);
+}
+
+/* State Sizes */
+mira-character[size="sm"] .mira-character-container { max-width: 280px; }
+mira-character[size="md"] .mira-character-container { max-width: 440px; }
+mira-character[size="lg"] .mira-character-container { max-width: 600px; }
+mira-character[size="xl"] .mira-character-container { max-width: 760px; }
+mira-character[size="responsive"] .mira-character-container { max-width: 100%; }
+
+/* Visibility Control */
+mira-character[visibility="false"] {
+  display: none !important;
+}
+
+/* Aspect Ratio Wrapper: preserves canonical 3:2 portrait canvas */
+.mira-portrait-canvas {
+  position: relative;
+  width: 100%;
+  padding-bottom: 66.67%; /* 1024 / 1536 ≈ 66.67% (3:2 Aspect Ratio) */
+  background-color: #0b1329;
+  overflow: hidden;
+  perspective: 1000px;
+}
+
+/* Multi-Layer Stack Container */
+.mira-layers-stack {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transform-origin: 50% 60%;
+  transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Individual Layer Elements */
+.mira-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Layer 0: Background */
+.mira-layer-background {
+  z-index: 0;
+  background: radial-gradient(circle at 50% 30%, rgba(13, 148, 136, 0.15) 0%, rgba(15, 23, 42, 0.75) 85%);
+}
+
+/* Layer Placeholders for Future 3D Rig */
+.mira-layer-body { z-index: 10; }
+.mira-layer-uniform { z-index: 20; }
+.mira-layer-head { z-index: 30; }
+.mira-layer-hair { z-index: 40; }
+
+/* Layer 50: Face & Canonical Reference Image */
+.mira-layer-face {
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mira-canonical-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+  display: block;
+  image-rendering: -webkit-optimize-contrast;
+  transition: opacity 0.2s ease;
+}
+
+/* ==========================================================================
+   Layer 60: Eyelid & Ocular Overlay (Anatomically Calibrated for MIRA)
+   ========================================================================== */
+.mira-layer-eyes {
+  z-index: 60;
+}
+
+.mira-eye-aperture {
+  position: absolute;
+  overflow: hidden;
+  border-radius: 50% 50% 45% 45%;
+  pointer-events: none;
+}
+
+/* Left Eye Aperture (Viewer's Left, MIRA's right eye) */
+.mira-eye-left {
+  left: 45.4%;
+  top: 31.8%;
+  width: 2.2%;
+  height: 1.6%;
+}
+
+/* Right Eye Aperture (Viewer's Right, MIRA's left eye) */
+.mira-eye-right {
+  left: 51.8%;
+  top: 31.8%;
+  width: 2.2%;
+  height: 1.6%;
+}
+
+/* Eyelid Curtain: rolls down seamlessly over eye aperture */
+.mira-eyelid-curtain {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  background: linear-gradient(180deg, #b8865a 0%, #9e6f47 70%, #3e2210 100%);
+  border-radius: 0 0 50% 50%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transition: height 0.05s ease, opacity 0.05s ease;
+}
+
+/* Layer 70: Eyebrows */
+.mira-layer-eyebrows {
+  z-index: 70;
+}
+
+/* ==========================================================================
+   Layer 80: Phonetic Viseme Mouth Articulation Overlay
+   ========================================================================== */
+.mira-layer-mouth {
+  z-index: 80;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mira-mouth-aperture {
+  position: absolute;
+  left: 49.3%;
+  top: 43.6%;
+  transform: translate(-50%, -50%);
+  width: 0px;
+  height: 0px;
+  background: radial-gradient(ellipse at center, #2e0d0d 0%, #1e0909 70%, transparent 100%);
+  border-radius: 40% 40% 50% 50%;
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transition: width 0.08s ease, height 0.08s ease, opacity 0.08s ease;
+}
+
+/* Layer 90: Accessories */
+.mira-layer-accessories {
+  z-index: 90;
+}
+
+/* ==========================================================================
+   Clinical State Halo & Overlays
+   ========================================================================== */
+.mira-state-halo {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 38%;
+  background: linear-gradient(0deg, rgba(15, 23, 42, 0.88) 0%, rgba(15, 23, 42, 0.35) 60%, transparent 100%);
+  z-index: 85;
+  pointer-events: none;
+  transition: background var(--mira-transition-state);
+}
+
+/* Clinical Status Header Overlay */
+.mira-badge-overlay {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 95;
+  pointer-events: auto;
+}
+
+.mira-identity-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--mira-medical-white);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.mira-logo-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background-color: var(--state-accent, var(--mira-clinical-teal));
+  box-shadow: 0 0 8px var(--state-accent, var(--mira-clinical-teal));
+  transition: background-color var(--mira-transition-state), box-shadow var(--mira-transition-state);
+}
+
+.mira-logo-text {
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+}
+
+.mira-credential-text {
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--mira-accent-sandal);
+  letter-spacing: 0.03em;
+  padding-left: 4px;
+  border-left: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+/* State Status Pill */
+.mira-state-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+  transition: all var(--mira-transition-state);
+}
+
+.mira-state-indicator-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--state-accent, var(--mira-clinical-teal));
+  box-shadow: 0 0 6px var(--state-accent, var(--mira-clinical-teal));
+}
+
+/* Clinical Bottom Card (Bedside Information) */
+.mira-bottom-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 14px 18px;
+  z-index: 92;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  color: #ffffff;
+}
+
+.mira-info-cluster {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mira-name-label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mira-accent-badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  background: rgba(244, 114, 182, 0.2);
+  color: var(--mira-accent-pink);
+  border: 1px solid rgba(244, 114, 182, 0.4);
+  border-radius: 4px;
+}
+
+.mira-clinical-intent {
+  font-size: 0.8rem;
+  color: #cbd5e1;
+  max-width: 480px;
+  line-height: 1.3;
+}
+
+.mira-version-label {
+  font-size: 0.65rem;
+  color: #94a3b8;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* ==========================================================================
+   State-Specific Accents & Halos
+   ========================================================================== */
+mira-character[state="IDLE"] { --state-accent: var(--mira-clinical-teal); }
+mira-character[state="GREETING"] { --state-accent: var(--mira-accent-pink); }
+mira-character[state="LISTENING"] { --state-accent: #3b82f6; }
+mira-character[state="THINKING"] { --state-accent: #8b5cf6; }
+mira-character[state="SPEAKING"] { --state-accent: #0ea5e9; }
+mira-character[state="FRIENDLY"] { --state-accent: #ec4899; }
+mira-character[state="CONCERNED"] { --state-accent: #f59e0b; }
+mira-character[state="SERIOUS"] { --state-accent: #ea580c; }
+mira-character[state="REASSURING"] { --state-accent: var(--mira-accent-sandal); }
+mira-character[state="EMERGENCY"] { --state-accent: var(--mira-emergency-red); }
+mira-character[state="EMERGENCY"] .mira-character-container {
+  border-color: rgba(220, 38, 38, 0.5);
+  box-shadow: 0 0 30px rgba(220, 38, 38, 0.3);
+}
+mira-character[state="ESCALATING"] { --state-accent: #d97706; }
+mira-character[state="CALMING"] { --state-accent: #14b8a6; }
+mira-character[state="COMPLETED"] { --state-accent: #10b981; }
+
+/* ==========================================================================
+   Responsive Adaptations
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .mira-name-label { font-size: 1rem; }
+  .mira-clinical-intent { font-size: 0.75rem; max-width: 380px; }
+}
+
+@media (max-width: 768px) {
+  .mira-portrait-canvas { padding-bottom: 75%; }
+  .mira-canonical-image { object-position: center 20%; }
+  .mira-eye-left { left: 45.4%; top: 29.5%; width: 2.4%; height: 1.8%; }
+  .mira-eye-right { left: 51.8%; top: 29.5%; width: 2.4%; height: 1.8%; }
+  .mira-mouth-aperture { left: 49.3%; top: 41.5%; }
+  .mira-badge-overlay { top: 10px; left: 10px; right: 10px; }
+  .mira-identity-tag { padding: 4px 9px; }
+  .mira-logo-text { font-size: 0.75rem; }
+  .mira-credential-text { font-size: 0.6rem; }
+  .mira-state-pill { padding: 4px 9px; font-size: 0.68rem; }
+  .mira-bottom-bar { padding: 10px 14px; }
+  .mira-name-label { font-size: 0.92rem; }
+  .mira-clinical-intent { font-size: 0.7rem; line-height: 1.25; max-width: 260px; }
+  .mira-version-label { display: none; }
+}
+
+@media (max-width: 480px) {
+  .mira-portrait-canvas { padding-bottom: 85%; }
+  .mira-canonical-image { object-position: center 18%; }
+  .mira-eye-left { left: 45.4%; top: 28.0%; width: 2.6%; height: 2.0%; }
+  .mira-eye-right { left: 51.8%; top: 28.0%; width: 2.6%; height: 2.0%; }
+  .mira-mouth-aperture { left: 49.3%; top: 40.0%; }
+  .mira-credential-text { display: none; }
+  .mira-clinical-intent { max-width: 190px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+}

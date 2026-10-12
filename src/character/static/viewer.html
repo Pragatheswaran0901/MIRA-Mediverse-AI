@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MIRA — Interactive Character Animation Foundation (Block 3)</title>
+  
+  <link rel="stylesheet" href="/character-ui/mira-character.css" />
+  
+  <style>
+    :root {
+      --bg-dark: #090e1a;
+      --panel-dark: #0f172a;
+      --panel-border: rgba(148, 163, 184, 0.15);
+      --text-main: #f8fafc;
+      --text-dim: #94a3b8;
+      --teal-primary: #0d9488;
+      --teal-hover: #14b8a6;
+      --pink-accent: #f472b6;
+      --sandal-accent: #e2c799;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Navigation Bar */
+    .top-header {
+      background: var(--panel-dark);
+      border-bottom: 1px solid var(--panel-border);
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-logo-pill {
+      background: linear-gradient(135deg, var(--teal-primary), var(--teal-hover));
+      color: #fff;
+      font-weight: 800;
+      font-size: 1.1rem;
+      padding: 4px 12px;
+      border-radius: 8px;
+      letter-spacing: 0.08em;
+    }
+
+    .brand-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .brand-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    .status-badge-block {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      background: rgba(13, 148, 136, 0.12);
+      border: 1px solid rgba(13, 148, 136, 0.35);
+      color: var(--teal-hover);
+      padding: 5px 12px;
+      border-radius: 9999px;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+    }
+
+    /* Main Workspace Layout */
+    .app-main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 24px;
+      padding: 24px;
+      max-width: 1540px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Character Display Stage */
+    .character-stage-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .stage-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--panel-dark);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 10px 16px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .toolbar-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toolbar-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .tool-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tool-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .tool-btn.active {
+      background: var(--teal-primary);
+      border-color: var(--teal-hover);
+      color: #fff;
+    }
+
+    .tool-btn.btn-emergency {
+      background: rgba(220, 38, 38, 0.2);
+      border-color: rgba(220, 38, 38, 0.4);
+      color: #fca5a5;
+    }
+    .tool-btn.btn-emergency:hover {
+      background: rgba(220, 38, 38, 0.35);
+      color: #fff;
+    }
+
+    /* Primary Character Viewport */
+    .character-viewport {
+      background: #080d1a;
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      min-height: 480px;
+    }
+
+    /* Control & Telemetry Sidebar */
+    .control-sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .panel-card {
+      background: var(--panel-dark);
+      border: 1px solid var(--panel-border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 8px;
+    }
+
+    .panel-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--teal-hover);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .panel-subtitle {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+    }
+
+    /* State Grid */
+    .state-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .state-button {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 8px 10px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .state-button:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .state-button.active {
+      border-color: var(--btn-accent, var(--teal-primary));
+      background: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .state-btn-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .state-btn-prio {
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      font-family: ui-monospace, monospace;
+    }
+
+    /* Action Button Grid */
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .action-btn {
+      background: rgba(13, 148, 136, 0.1);
+      border: 1px solid rgba(13, 148, 136, 0.25);
+      color: #ccfbf1;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+    .action-btn:hover {
+      background: rgba(13, 148, 136, 0.2);
+      border-color: var(--teal-hover);
+    }
+
+    /* Live Telemetry Data Box */
+    .telemetry-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      font-family: ui-monospace, SFMono-Regular, monospace;
+      font-size: 0.72rem;
+    }
+
+    .telemetry-item {
+      background: rgba(0, 0, 0, 0.25);
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .telemetry-label {
+      color: var(--text-dim);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+    }
+
+    .telemetry-value {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* Status Console Box */
+    .status-console {
+      background: #060a14;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-family: ui-monospace, monospace;
+      font-size: 0.72rem;
+      color: #a5f3fc;
+      max-height: 80px;
+      overflow-y: auto;
+    }
+
+    @media (max-width: 1024px) {
+      .app-main {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Header Navigation -->
+  <header class="top-header">
+    <div class="brand-section">
+      <div class="brand-logo-pill">MIRA</div>
+      <div>
+        <div class="brand-title">Interactive Character Animation Foundation</div>
+        <div class="brand-subtitle">Block 3 — Canonical Anchor MIRA_FACE_MODEL_v1</div>
+      </div>
+    </div>
+    <div class="status-badge-block">
+      <span>●</span>
+      <span id="headerStatus">ANIMATION ENGINE: ACTIVE</span>
+    </div>
+  </header>
+
+  <!-- Main Application Workspace -->
+  <main class="app-main">
+    
+    <!-- Character Stage Column -->
+    <div class="character-stage-wrapper">
+      
+      <!-- Toolbar -->
+      <div class="stage-toolbar">
+        <div class="toolbar-group">
+          <span class="toolbar-label">Viewport Size:</span>
+          <button class="tool-btn" data-size="sm">SM</button>
+          <button class="tool-btn" data-size="md">MD</button>
+          <button class="tool-btn active" data-size="lg">LG</button>
+          <button class="tool-btn" data-size="responsive">RESPONSIVE</button>
+        </div>
+
+        <div class="toolbar-group">
+          <button class="tool-btn" id="btnTogglePause">PAUSE</button>
+          <button class="tool-btn" id="btnResetAll">RESET TO IDLE</button>
+        </div>
+      </div>
+
+      <!-- Character Stage -->
+      <div class="character-viewport">
+        <mira-character id="miraAvatar" state="IDLE" size="lg"></mira-character>
+      </div>
+
+      <!-- Quick Action Bar -->
+      <div class="stage-toolbar">
+        <div class="toolbar-group">
+          <span class="toolbar-label">Clinical Workflow:</span>
+          <button class="tool-btn" id="btnFlowGreeting">1. Greeting</button>
+          <button class="tool-btn" id="btnFlowListen">2. Listen</button>
+          <button class="tool-btn" id="btnFlowThink">3. Think</button>
+          <button class="tool-btn" id="btnFlowSpeak">4. Speak</button>
+          <button class="tool-btn btn-emergency" id="btnFlowEmergency">Emergency Alert</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Controls and Telemetry Sidebar -->
+    <div class="control-sidebar">
+      
+      <!-- State Engine Panel -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <div class="panel-title">Character States (13)</div>
+          <div class="panel-subtitle">Hierarchical Priority</div>
+        </div>
+
+        <div class="state-grid" id="stateButtonsContainer">
+          <!-- Dynamically populated from JS -->
+        </div>
+      </div>
+
+      <!-- Priority & Interruption Testing Panel -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <div class="panel-title">Priority & Interruption Engine</div>
+          <div class="panel-subtitle">Block 3 Invariants</div>
+        </div>
+
+        <div class="actions-grid">
+          <button class="action-btn" id="btnTestBargeIn">Simulate User Barge-In (Interrupt)</button>
+          <button class="action-btn" id="btnTestEmergencyLock">Test Emergency Priority Lock</button>
+          <button class="action-btn" id="btnTriggerBlink">Trigger Natural Blink</button>
+          <button class="action-btn" id="btnTriggerNod">Trigger Listening Nod</button>
+        </div>
+
+        <div class="panel-header" style="margin-top: 6px;">
+          <div class="panel-title">Attention & Gaze Controls</div>
+        </div>
+        <div class="actions-grid">
+          <button class="action-btn" id="btnGazeUser">Look at User</button>
+          <button class="action-btn" id="btnGazeScreen">Look at Screen</button>
+          <button class="action-btn" id="btnGazeAway">Look Away</button>
+          <button class="action-btn" id="btnCadenceSpeech">Speech Cadence</button>
+        </div>
+      </div>
+
+      <!-- Live Telemetry HUD Panel -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <div class="panel-title">Live Telemetry HUD</div>
+          <div class="panel-subtitle" id="fpsDisplay">60 FPS</div>
+        </div>
+
+        <div class="telemetry-grid">
+          <div class="telemetry-item">
+            <span class="telemetry-label">Active State</span>
+            <span class="telemetry-value" id="hudState">IDLE</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="telemetry-label">Priority Level</span>
+            <span class="telemetry-value" id="hudPriority">10 (BASELINE)</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="telemetry-label">Gaze Target</span>
+            <span class="telemetry-value" id="hudGaze">USER (0, 0)</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="telemetry-label">Blink Weight</span>
+            <span class="telemetry-value" id="hudBlink">0.00 (OPEN)</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="telemetry-label">Head (P, Y, R)</span>
+            <span class="telemetry-value" id="hudHead">0.0°, 0.0°, 0.0°</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="telemetry-label">Breathing CPM</span>
+            <span class="telemetry-value" id="hudBreathing">14.0 CPM</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="telemetry-label">Viseme</span>
+            <span class="telemetry-value" id="hudViseme">SIL</span>
+          </div>
+          <div class="telemetry-item">
+            <span class="telemetry-label">Lifecycle Status</span>
+            <span class="telemetry-value" id="hudLifecycle">ACTIVE</span>
+          </div>
+        </div>
+
+        <div class="status-console" id="statusConsole">
+          [System Ready] MIRA Character Animation Foundation Initialized. Canonical Anchor: MIRA_FACE_MODEL_v1.
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="/character-ui/mira-character.js"></script>
+
+  <script>
+    (function () {
+      const avatar = document.getElementById("miraAvatar");
+      const stateGrid = document.getElementById("stateButtonsContainer");
+      const consoleLog = document.getElementById("statusConsole");
+      const fpsDisplay = document.getElementById("fpsDisplay");
+
+      // HUD elements
+      const hudState = document.getElementById("hudState");
+      const hudPriority = document.getElementById("hudPriority");
+      const hudGaze = document.getElementById("hudGaze");
+      const hudBlink = document.getElementById("hudBlink");
+      const hudHead = document.getElementById("hudHead");
+      const hudBreathing = document.getElementById("hudBreathing");
+      const hudViseme = document.getElementById("hudViseme");
+      const hudLifecycle = document.getElementById("hudLifecycle");
+
+      function logMessage(msg) {
+        if (!consoleLog) return;
+        const time = new Date().toLocaleTimeString();
+        consoleLog.innerHTML = `[${time}] ${msg}<br/>` + consoleLog.innerHTML;
+      }
+
+      // Populate State Grid
+      const states = window.MiraCharacter.STATES;
+      const prios = window.MiraCharacter.STATE_PRIORITIES;
+
+      Object.keys(states).forEach((key) => {
+        const meta = states[key];
+        const p = prios[key] || 10;
+        const btn = document.createElement("button");
+        btn.className = `state-button ${key === "IDLE" ? "active" : ""}`;
+        btn.style.setProperty("--btn-accent", meta.accent);
+        btn.setAttribute("data-state", key);
+        btn.innerHTML = `
+          <span class="state-btn-title" style="color:${meta.accent}">${key}</span>
+          <span class="state-btn-prio">Prio: ${p} | ${meta.name}</span>
+        `;
+        btn.addEventListener("click", () => {
+          const success = avatar.controller.setState(key);
+          if (success) {
+            avatar.setAttribute("state", key);
+            updateActiveStateButton(key);
+            logMessage(`State transitioned to ${key} (Priority ${p})`);
+          } else {
+            logMessage(`⚠ Transition to ${key} REJECTED due to higher active priority (${avatar.state} = ${avatar.controller.currentPriority})`);
+          }
+        });
+        stateGrid.appendChild(btn);
+      });
+
+      function updateActiveStateButton(activeKey) {
+        document.querySelectorAll(".state-button").forEach((b) => {
+          if (b.getAttribute("data-state") === activeKey) {
+            b.classList.add("active");
+          } else {
+            b.classList.remove("active");
+          }
+        });
+      }
+
+      // Viewport Size Switchers
+      document.querySelectorAll("[data-size]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll("[data-size]").forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          avatar.setAttribute("size", btn.getAttribute("data-size"));
+          logMessage(`Viewport size set to ${btn.getAttribute("data-size")}`);
+        });
+      });
+
+      // Pause/Resume
+      const pauseBtn = document.getElementById("btnTogglePause");
+      pauseBtn.addEventListener("click", () => {
+        if (avatar.controller.isPaused) {
+          avatar.controller.resume();
+          pauseBtn.textContent = "PAUSE";
+          hudLifecycle.textContent = "ACTIVE";
+          logMessage("Character animation resumed");
+        } else {
+          avatar.controller.pause();
+          pauseBtn.textContent = "RESUME";
+          hudLifecycle.textContent = "PAUSED";
+          logMessage("Character animation paused (Lifecycle test)");
+        }
+      });
+
+      // Reset All
+      document.getElementById("btnResetAll").addEventListener("click", () => {
+        avatar.controller.reset();
+        avatar.setAttribute("state", "IDLE");
+        updateActiveStateButton("IDLE");
+        logMessage("Character reset to neutral IDLE baseline");
+      });
+
+      // Clinical Workflow Buttons
+      document.getElementById("btnFlowGreeting").addEventListener("click", () => {
+        avatar.controller.playGreeting();
+        avatar.setAttribute("state", "GREETING");
+        updateActiveStateButton("GREETING");
+        logMessage("Workflow step 1: Greeting patient with clinical warmth");
+      });
+
+      document.getElementById("btnFlowListen").addEventListener("click", () => {
+        avatar.controller.startListening();
+        avatar.setAttribute("state", "LISTENING");
+        updateActiveStateButton("LISTENING");
+        logMessage("Workflow step 2: Active listening to patient symptoms");
+      });
+
+      document.getElementById("btnFlowThink").addEventListener("click", () => {
+        avatar.controller.startThinking();
+        avatar.setAttribute("state", "THINKING");
+        updateActiveStateButton("THINKING");
+        logMessage("Workflow step 3: Clinical reasoning / protocol evaluation");
+      });
+
+      document.getElementById("btnFlowSpeak").addEventListener("click", () => {
+        avatar.controller.startSpeaking();
+        avatar.setAttribute("state", "SPEAKING");
+        updateActiveStateButton("SPEAKING");
+        logMessage("Workflow step 4: Delivering clinical guidance");
+      });
+
+      document.getElementById("btnFlowEmergency").addEventListener("click", () => {
+        avatar.controller.showEmergency();
+        avatar.setAttribute("state", "EMERGENCY");
+        updateActiveStateButton("EMERGENCY");
+        logMessage("🚨 EMERGENCY detected! Priority 100 engaged");
+      });
+
+      // Priority and Interruption Testing Buttons
+      document.getElementById("btnTestBargeIn").addEventListener("click", () => {
+        logMessage("⚡ Starting speech, then patient interrupts...");
+        avatar.controller.startSpeaking();
+        avatar.setAttribute("state", "SPEAKING");
+        updateActiveStateButton("SPEAKING");
+
+        setTimeout(() => {
+          logMessage("⚡ User started speaking! Triggering interrupt()...");
+          avatar.controller.interrupt();
+          avatar.setAttribute("state", "LISTENING");
+          updateActiveStateButton("LISTENING");
+          logMessage("✅ Interruption complete: MIRA stopped speaking and transitioned to LISTENING with attentive nod");
+        }, 1200);
+      });
+
+      document.getElementById("btnTestEmergencyLock").addEventListener("click", () => {
+        avatar.controller.showEmergency();
+        avatar.setAttribute("state", "EMERGENCY");
+        updateActiveStateButton("EMERGENCY");
+        logMessage("🚨 Set EMERGENCY (Priority 100). Now attempting to set IDLE without force...");
+
+        setTimeout(() => {
+          const success = avatar.controller.setState("IDLE", false);
+          if (!success) {
+            logMessage("🛡️ SUCCESS: Priority rule enforced! EMERGENCY cannot be overridden by IDLE.");
+          } else {
+            logMessage("❌ FAILURE: IDLE was improperly accepted.");
+          }
+        }, 800);
+      });
+
+      document.getElementById("btnTriggerBlink").addEventListener("click", () => {
+        avatar.controller.blink();
+        logMessage("Natural eyelid blink triggered");
+      });
+
+      document.getElementById("btnTriggerNod").addEventListener("click", () => {
+        avatar.controller.attentionController.triggerListeningNod();
+        logMessage("Bedside acknowledgment nod triggered");
+      });
+
+      document.getElementById("btnGazeUser").addEventListener("click", () => {
+        avatar.controller.lookAtUser();
+        logMessage("Gaze oriented to USER");
+      });
+
+      document.getElementById("btnGazeScreen").addEventListener("click", () => {
+        avatar.controller.lookAtScreen();
+        logMessage("Gaze oriented to vitals SCREEN");
+      });
+
+      document.getElementById("btnGazeAway").addEventListener("click", () => {
+        avatar.controller.lookAway();
+        logMessage("Gaze shifted AWAY (contemplative)");
+      });
+
+      document.getElementById("btnCadenceSpeech").addEventListener("click", () => {
+        avatar.controller.lipSyncController.feedAudioEnergy(0.75, 160);
+        logMessage("Simulated vocal energy stream (0.75 RMS) fed to lip sync controller");
+      });
+
+      // Live HUD Telemetry Loop
+      let frameCount = 0;
+      let lastFpsTime = performance.now();
+
+      function updateHud() {
+        frameCount++;
+        const now = performance.now();
+        if (now - lastFpsTime >= 1000) {
+          fpsDisplay.textContent = `${frameCount} FPS`;
+          frameCount = 0;
+          lastFpsTime = now;
+        }
+
+        if (avatar && avatar.controller) {
+          const c = avatar.controller;
+          hudState.textContent = c.currentState;
+          hudPriority.textContent = `${c.currentPriority} / 100`;
+
+          const eye = c.eyeController;
+          hudGaze.textContent = `${eye.target} (${eye.currentYaw.toFixed(1)}°, ${eye.currentPitch.toFixed(1)}°)`;
+          hudBlink.textContent = eye.isBlinking ? `${eye.blinkWeight.toFixed(2)} (BLINKING)` : "0.00 (OPEN)";
+
+          const att = c.attentionController;
+          hudHead.textContent = `${att.currentPitch.toFixed(1)}°, ${att.currentYaw.toFixed(1)}°, ${att.currentRoll.toFixed(1)}°`;
+          hudBreathing.textContent = `${att.breathingRateCpm.toFixed(1)} CPM`;
+
+          hudViseme.textContent = c.lipSyncController.currentViseme;
+        }
+        requestAnimationFrame(updateHud);
+      }
+      requestAnimationFrame(updateHud);
+
+    })();
+  </script>
+</body>
+</html>

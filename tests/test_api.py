@@ -21,7 +21,7 @@ async def test_health_endpoint(test_app):
         data = response.json()
         assert data["status"] == "ok"
         assert data["app_name"] == "MIRA"
-        assert "Block 1" in data["current_block"]
+        assert "Block 2" in data["current_block"]
         assert "brain" in data["subsystems"]
         assert "safety" in data["subsystems"]
         assert "knowledge" in data["subsystems"]

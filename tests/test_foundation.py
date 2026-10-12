@@ -11,7 +11,7 @@ def test_settings_load_defaults():
     settings = get_settings()
     assert settings.app_name == "MIRA"
     assert settings.app_full_name == "Medical Intelligent Response Assistant"
-    assert "Block 1" in settings.current_block
+    assert "Block 2" in settings.current_block
     assert settings.strict_safety_mode is True
     assert settings.emergency_escalation_enabled is True
 

@@ -3,8 +3,9 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg)](https://fastapi.tiangolo.com)
 [![Pydantic v2](https://img.shields.io/badge/Pydantic-v2.8+-E92063.svg)](https://docs.pydantic.dev/)
-[![Tests Passing](https://img.shields.io/badge/tests-28%20passed-brightgreen.svg)]()
-[![Status](https://img.shields.io/badge/status-Block%201%3A%20Foundation-success.svg)]()
+[![Tests Passing](https://img.shields.io/badge/tests-70%20passed-brightgreen.svg)]()
+[![Status](https://img.shields.io/badge/status-Block%203%3A%20Interactive%20Character%20Animation%20Foundation-success.svg)]()
+
 
 > **MIRA** is an independent, standalone AI healthcare companion and AI Nurse Assistant built from first principles.
 
@@ -155,7 +156,7 @@ Server runs at `http://127.0.0.1:8000`. Interactive API documentation is availab
 
 ---
 
-## 📡 API Endpoints (Block 1)
+## 📡 API Endpoints
 
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |
@@ -163,15 +164,28 @@ Server runs at `http://127.0.0.1:8000`. Interactive API documentation is availab
 | `GET` | `/api/v1/info` | Product identity, persona traits, and architecture tiers |
 | `POST` | `/api/v1/verify-safety` | Audits candidate text for safety policy compliance |
 | `POST` | `/api/v1/triage-evaluate` | Evaluates symptom severity into 4-tier triage classification |
+| `GET` | `/character` | Interactive MIRA character viewer & verification console |
+| `GET` | `/api/v1/character/identity` | Canonical MIRA character identity contract & checksums |
+| `GET` | `/api/v1/character/states` | Data-driven 13-state visual definition registry |
+| `GET` | `/api/v1/character/layers` | 10-layer visual architecture stack (z-indices 0 to 90) |
+| `GET` | `/api/v1/character/animation-hooks` | Dormant future animation capability contracts |
+| `GET` | `/api/v1/character/verify-reference` | Live SHA256 integrity verification of `MIRA_FACE_MODEL.png` |
+| `GET` | `/api/v1/character/priorities` | Canonical state priority hierarchy ranking |
+| `GET` | `/api/v1/character/telemetry` | Live telemetry snapshot of active animation controllers |
+| `POST` | `/api/v1/character/state` | Transitions character visual state with priority enforcement |
+| `POST` | `/api/v1/character/event` | Dispatches character lifecycle event onto event bus |
+| `POST` | `/api/v1/character/interrupt` | Triggers immediate patient conversational barge-in |
 
 ---
 
 ## 🛣️ Development Roadmap
 
-- [x] **Block 1: Project Foundation** *(Current)*
-- [ ] **Block 2: Brain Core & Clinical Reasoning**
-- [ ] **Block 3: Knowledge Base & Medical RAG**
-- [ ] **Block 4: Healthcare Tool Engine & Integrations**
-- [ ] **Block 5: Voice Pipeline & Custom MIRA Voice**
-- [ ] **Block 6: Interactive Character & Avatar**
-- [ ] **Block 7: MIRA API & External Integrations Gateway**
+- [x] **Block 1: Project Foundation** *(Completed)*
+- [x] **Block 2: Character Asset Foundation** *(Completed — MIRA_FACE_MODEL Canonical Anchor)*
+- [x] **Block 3: Interactive Character Animation Foundation** *(Completed — Priority State Engine & Subsystems)*
+- [ ] **Block 4: Brain Core & Clinical Reasoning**
+- [ ] **Block 5: Knowledge Base & Medical RAG**
+- [ ] **Block 6: Healthcare Tool Engine & Integrations**
+- [ ] **Block 7: Voice Pipeline & Custom MIRA Voice**
+- [ ] **Block 8: MIRA API & External Integrations Gateway**
+

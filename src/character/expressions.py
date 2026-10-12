@@ -5,6 +5,7 @@ Defines foundational expression states, mood transitions, and contextual reactio
 
 from enum import Enum
 from pydantic import BaseModel, Field
+# pyrefly: ignore [missing-import]
 from src.core.contracts import UrgencyLevel
 
 
